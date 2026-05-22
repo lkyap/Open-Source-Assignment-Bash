@@ -1,3 +1,61 @@
 #!/usr/bin/env bash
 
 
+# Name: Liang Kooi Yap
+# ID: 24332936
+# Last modified: 22 May 2026
+
+# How to run the script:
+
+# Summary:
+
+
+# Declare variable
+inputFile="$1"
+
+# Error check 1: Prompt error if no input file specified or user provide empty string
+if [[ $# -eq 0 || -z "$inputFile" ]]
+then
+    echo "ERROR: No input CSV file provided" > /dev/stderr
+    exit 1
+fi
+
+# Error check 2: Prompt error if input file not found in the current directory
+if [[ ! -f "$inputFile" ]]
+then
+    echo "ERROR: Input file not found in the current directory" > /dev/stderr
+    exit 2
+fi
+
+# Error check 3: Prompt error if input file is not a CSV file
+if [[ "$inputFile" != *.csv ]]
+then
+    echo "ERROR: Input file expected in a CSV format" > /dev/stderr
+    exit 3
+fi
+
+# Error check 4: Prompt error if input file is empty.
+if [[ ! -s "$inputFile" ]]
+then
+    echo "ERROR: Empty file provided" > /dev/stderr
+    exit 4
+fi
+
+# Error check 5: Prompt error if input CSV file has incorrect number of columns
+# Find number of columns from header
+numCols=$(head -n 1 "$inputFile" | gawk -F ',' '{print NF}')
+
+# Prompt error message when if number of columns not equal to 7
+if [[ "$numCols" -ne 7 ]]
+then
+    echo "ERROR: Expected 7 columns in the input" > /dev/stderr
+    exit 5
+fi
+
+
+
+
+
+
+
+
