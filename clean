@@ -52,8 +52,55 @@ then
     exit 5
 fi
 
+# Data cleaning processes
+# 1. Exclude 'ratings_disabled' column and preserve first 5 columns 
+gawk -F',' '{print $1 "," $2 "," $3 "," $4 "," $5 "," $6}' "$inputFile" > temp1
 
+# 2. Delete rows that contain any empty field, even if they match number of field in the header
+gawk -F',' '
 
+# Keep the header from first row
+NR == 1 {
+    print $0 
+}
+
+# Process data from second row onwards
+NR > 1 {
+
+    keepRow = 1
+
+    # If number of field is not 6, delete the row
+    if (NF != 6){
+        keepRow = 0
+    }
+
+    # Delete the row if any field in the current row is empty
+    for (i=1; i <= NF; i++){
+        if ($i == ""){
+            keepRow = 0
+        }
+    }
+    
+    # Print the current row if the row has 6 fields and none of the field is empty
+    if (keepRow == 1){
+        print $0
+    }
+}' temp1 > temp2
+
+# 3. Delete rows which contain 0 likes or dislikes
+gawk -F ',' '
+
+# Keep the header from first row
+NR == 1 {
+    print $0
+}
+
+# Process data from second row onwards. Keep rows if both likes and dislikes are not 0
+NR > 1{
+    if ($4!=0 && $5!=0){
+        print $0
+    }
+}' temp2 > temp3
 
 
 
