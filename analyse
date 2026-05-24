@@ -54,21 +54,32 @@ NR > 1 {
 
 BEGIN {maxCount=0}
 {
-    # Count video occurrences and find max number of occurrences
+    # 1. Count video occurrences and find max number of occurrences
     countVid[videoID]++
     if (countVid[videoID]>maxCount){
         maxCount = countVid[videoID]
-    }
+    } 
 
 }
 
 END{
-    # Print the video ID that match max occurrences
+    # 1. Print the video ID that match max occurrences
+    mostFreqVid = ""
+    
+    # Append video ID is same frequency and print video ID
     for (vid in countVid){
         if (countVid[vid] == maxCount){
-            print "Most frequent video, ID: " vid
+            if (mostFreqVid == ""){
+                mostFreqVid = vid
+            }
+            else{
+                mostFreqVid = mostFreqVid "," vid 
+            } 
         }
     }
+    print "Most frequent video, ID: " mostFreqVid
+
+
 }
 
 ' "$inputFile" 
