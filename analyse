@@ -50,25 +50,36 @@ NR > 1 {
     likes = $4
     dislikes = $5
 
-    # Count num of records to find mean of views
+    # Q2. Count num of records to find mean of views
     countRecords++
+
+    # Q3. Find the maximum dislikes in the data
+    if (countRecords == 1 || dislikes > maxDislikes){
+        maxDislikes = dislikes
+    }
+    # Store the video ID and dislikes for each row
+    rowDislikes[countRecords] = dislikes
+    rowVideoID[countRecords] = videoID
+    
+     
 }
 
 
 BEGIN {maxCount=0;totalViews=0}
 {
-    # 1. Count video occurrences and find max number of occurrences
+    # Q1. Count video occurrences and find max number of occurrences
     countVid[videoID]++
     if (countVid[videoID]>maxCount){
         maxCount = countVid[videoID]
     } 
     
-    # 2. Sum up views
+    # Q2. Sum up views to calculate the mean of views
     totalViews += views
+ 
 }
 
 END{
-    # 1. Print the video ID that match max occurrences
+    # Q1. Print the video ID that match max occurrences
     mostFreqVid = ""
     
     # Append video ID is same frequency and print video ID
@@ -84,9 +95,23 @@ END{
     }
     print "Most frequent video, ID: " mostFreqVid
     
-    # 2. Print the mean of views using printf function
+    # Q2. Print the mean of views using printf function
     printf "Mean number of views: %.2f\n", totalViews / countRecords
 
+    # Q3. Print the max dislikes
+    maxDislikeVid = ""
+
+    for (i = 1; i<=countRecords;i++){
+        if (rowDislikes[i] == maxDislikes){
+            if (maxDislikeVid == ""){
+                maxDislikeVid = rowVideoID[i]
+            }
+            else{
+                maxDislikeVid = maxDislikeVid "," rowVideoID[i]
+            }
+        }
+    }
+    print "Max dislikes video, ID: " maxDislikeVid
 }
 
 ' "$inputFile" 
