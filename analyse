@@ -49,8 +49,16 @@ NR > 1 {
     views = $3
     likes = $4
     dislikes = $5
+    
+    # Q1. Calculate max occurrence of video
+    countVid[videoID]++
 
-    # Q2. Count num of records to find mean of views
+    if (countVid[videoID] > maxCountVid){
+        maxCountVid = countVid[videoID]
+    }
+
+    # Q2. Sum views and count num of records to find mean of views
+    totalViews += views
     countRecords++
 
     # Q3. Find the maximum dislikes in the data
@@ -85,27 +93,13 @@ NR > 1 {
     rowSentiRate[countRecords] = sentiRate
 }
 
-
-BEGIN {maxCount=0;totalViews=0}
-{
-    # Q1. Count video occurrences and find max number of occurrences
-    countVid[videoID]++
-    if (countVid[videoID]>maxCount){
-        maxCount = countVid[videoID]
-    } 
-    
-    # Q2. Sum up views to calculate the mean of views
-    totalViews += views
- 
-}
-
 END{
     # Q1. Print the video ID that match max occurrences
     mostFreqVid = ""
     
     # Append video ID is same frequency and print video ID
     for (vid in countVid){
-        if (countVid[vid] == maxCount){
+        if (countVid[vid] == maxCountVid){
             if (mostFreqVid == ""){
                 mostFreqVid = vid
             }
@@ -159,15 +153,15 @@ END{
         if(rowSentiRate[i] == minSentiRate){
             result = rowVideoID[i] ", dated: " rowPubDate[i]
 
-            if (leastSentiVid == ""){
-                leastSentiVid = result
+            if (minSentiVid == ""){
+                minSentiVid = result
             }
             else{
-                leastSentiVid = leastSentiVid "; " result
+                minSentiVid = minSentiVid "; " result
             }
         }
     }
-    print "Least sentiment rate video, ID: " leastSentiVid
+    print "Least sentiment rate video, ID: " minSentiVid
 }
 
 ' "$inputFile" 
