@@ -148,6 +148,6 @@ NR == 1 {
 NR > 1 {
     sub(/T.*/,"",$2)
     print $1 "," $2 "," $3 "," $4 "," $5 "," $6 
-}' temp4 > trend_videos_manual.csv
+}' temp4 > trending_videos_clean.csv
 
 rm temp1 temp2 temp3 temp4
