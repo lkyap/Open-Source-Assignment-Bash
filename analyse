@@ -19,7 +19,59 @@ then
 fi
 
 # Error check 2: Input file not found
+if [[ ! -f "$inputFile" ]]
+then
+    echo "ERROR: Input file not found in the current directory" > /dev/stderr
+    exit 2
+fi
 
+# Error check 3: Input file is not CSV
+if [[ "$inputFile" != *.csv ]]
+then
+    echo "ERROR: Input file expected in a CSV format" > /dev/stderr
+    exit 3
+fi
+
+# Error check 4: Empty file
+if [[ ! -s "$inputFile" ]]
+then
+    echo "ERROR: Empty file provided" > /dev/stderr
+    exit 4
+fi
+
+# Following code section is for data analysis
+gawk -F ',' '
+    
+# Start reading data after header and declare variable
+NR > 1 {
+    videoID = $1
+    publishDate = $2
+    views = $3
+    likes = $4
+    dislikes = $5
+}
+
+
+BEGIN {maxCount=0}
+{
+    # Count video occurrences and find max number of occurrences
+    countVid[videoID]++
+    if (countVid[videoID]>maxCount){
+        maxCount = countVid[videoID]
+    }
+
+}
+
+END{
+    # Print the video ID that match max occurrences
+    for (vid in countVid){
+        if (countVid[vid] == maxCount){
+            print "Most frequent video, ID: " vid
+        }
+    }
+}
+
+' "$inputFile" 
 
 
 
