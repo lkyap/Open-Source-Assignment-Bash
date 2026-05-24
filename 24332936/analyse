@@ -45,7 +45,18 @@ then
     exit 4
 fi
 
-# Error check 5: File provided only has header and no data records
+# Error check 5: Prompt error if input CSV file has incorrect number of columns
+# Find number of columns from header
+numCols=$(head -n 1 "$inputFile" | gawk -F ',' '{print NF}')
+
+# Prompt error message when if number of columns not equal to 6
+if [[ "$numCols" -ne 6 ]]
+then
+    echo "ERROR: Expected 6 columns in the input" > /dev/stderr
+    exit 5
+fi
+
+# Error check 6: File provided only has header and no data records
 numRecords=$(gawk 'END {print NR}' "$inputFile")
 if [[ "$numRecords" -le 1 ]]
 then
