@@ -72,7 +72,17 @@ NR > 1 {
     # Store engagement rate and date for each row
     rowEngageRate[countRecords] = engageRate
     rowPubDate[countRecords] = publishDate
-     
+
+    # Q5. Calculate sentiment rate and find the least of its
+    sentiRate = (likes - dislikes) / views
+
+    # Find the least sentiment rate
+    if (countRecords == 1 || sentiRate < minSentiRate){
+        minSentiRate = sentiRate
+    }
+
+    # Store the sentiment rate for each row
+    rowSentiRate[countRecords] = sentiRate
 }
 
 
@@ -142,6 +152,22 @@ END{
 
     print "Highest engagement rate video, ID: " highestEngageVid
     
+    # Q5. Print the vid ID and date with least sentiment rate
+    minSentiVid = ""
+
+    for (i=1;i<=countRecords;i++){
+        if(rowSentiRate[i] == minSentiRate){
+            result = rowVideoID[i] ", dated: " rowPubDate[i]
+
+            if (leastSentiVid == ""){
+                leastSentiVid = result
+            }
+            else{
+                leastSentiVid = leastSentiVid "; " result
+            }
+        }
+    }
+    print "Least sentiment rate video, ID: " leastSentiVid
 }
 
 ' "$inputFile" 
