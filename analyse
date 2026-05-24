@@ -61,6 +61,17 @@ NR > 1 {
     rowDislikes[countRecords] = dislikes
     rowVideoID[countRecords] = videoID
     
+    # Q4. Calculate engagement rate and find its highest
+    engageRate = (likes + dislikes) / views
+
+    # Find the highest engagement rate
+    if (countRecords == 1 || engageRate > maxEngageRate){
+        maxEngageRate = engageRate
+    }
+    
+    # Store engagement rate and date for each row
+    rowEngageRate[countRecords] = engageRate
+    rowPubDate[countRecords] = publishDate
      
 }
 
@@ -112,6 +123,25 @@ END{
         }
     }
     print "Max dislikes video, ID: " maxDislikeVid
+
+    # Q4. Print the vid ID and date with highest engagement
+    highestEngageVid = ""
+
+    for (i=1; i <= countRecords; i++){
+        if (rowEngageRate[i] == maxEngageRate){
+            result = rowVideoID[i] ", dated: " rowPubDate[i]
+
+            if (highestEngageVid == ""){
+                highestEngageVid = result
+            }
+            else{
+                highestEngageVid = highestEngageVid "; " result
+            }
+        }
+    }
+
+    print "Highest engagement rate video, ID: " highestEngageVid
+    
 }
 
 ' "$inputFile" 
