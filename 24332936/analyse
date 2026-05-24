@@ -45,6 +45,14 @@ then
     exit 4
 fi
 
+# Error check 5: File provided only has header and no data records
+numRecords=$(gawk 'END {print NR}' "$inputFile")
+if [[ "$numRecords" -le 1 ]]
+then
+    echo "Error: No data records in the CSV file"
+    exit 5
+fi
+
 # Following code section is for data analysis
 gawk -F ',' '
     
@@ -121,14 +129,20 @@ END{
 
     # Q3. Print the max dislikes
     maxDislikeVid = ""
-
+    
+    # Match the dislikes in each row to max dislikes
     for (i = 1; i<=countRecords;i++){
         if (rowDislikes[i] == maxDislikes){
-            if (maxDislikeVid == ""){
-                maxDislikeVid = rowVideoID[i]
-            }
-            else{
-                maxDislikeVid = maxDislikeVid "," rowVideoID[i]
+            
+            # If same video ID exist in uniqDislikeID array, skip the ID and do not append 
+            if (!(rowVideoID[i] in uniqDislikeID)){
+                if (maxDislikeVid == ""){
+                    maxDislikeVid = rowVideoID[i]
+                }
+                else{
+                    maxDislikeVid = maxDislikeVid "," rowVideoID[i]
+                }
+                uniqDislikeID[rowVideoID[i]] = 1
             }
         }
     }
@@ -136,16 +150,24 @@ END{
 
     # Q4. Print the vid ID and date with highest engagement
     highestEngageVid = ""
-
+    
     for (i=1; i <= countRecords; i++){
         if (rowEngageRate[i] == maxEngageRate){
-            result = rowVideoID[i] ", dated: " rowPubDate[i]
+            
+            # Create a unique key with video ID and publish Date to display unique Video ID only
+            uniqIDDateEng = rowVideoID[i] "#" rowPubDate[i]
+            
+            # If the unique key not in existing uniqEngRate array, print or append the result
+            if (!(uniqIDDateEng in uniqEngRate)){
+                result = rowVideoID[i] ", dated: " rowPubDate[i]
 
-            if (highestEngageVid == ""){
-                highestEngageVid = result
-            }
-            else{
-                highestEngageVid = highestEngageVid "; " result
+                if (highestEngageVid == ""){
+                    highestEngageVid = result
+                }
+                else{
+                    highestEngageVid = highestEngageVid "; " result
+                }
+                uniqEngRate[uniqIDDateEng]=1
             }
         }
     }
@@ -154,16 +176,23 @@ END{
     
     # Q5. Print the vid ID and date with least sentiment rate
     minSentiVid = ""
-
+    
     for (i=1;i<=countRecords;i++){
         if(rowSentiRate[i] == minSentiRate){
-            result = rowVideoID[i] ", dated: " rowPubDate[i]
-
-            if (minSentiVid == ""){
-                minSentiVid = result
-            }
-            else{
-                minSentiVid = minSentiVid "; " result
+            
+            # Create unique key with video ID and Publish Date
+            uniqIDDateSenti = rowVideoID[i] "#" rowPubDate[i]
+            
+            # If unique key not in existing uniqSentiRate array, print or append the result
+            if (!(uniqIDDateSenti in uniqSentiRate)){
+                result = rowVideoID[i] ", dated: " rowPubDate[i]
+                if (minSentiVid == ""){
+                    minSentiVid = result
+                }
+                else{
+                    minSentiVid = minSentiVid "; " result
+                }
+                uniqSentiRate[uniqIDDateSenti] = 1
             }
         }
     }
