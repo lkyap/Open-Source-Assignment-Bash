@@ -49,17 +49,22 @@ NR > 1 {
     views = $3
     likes = $4
     dislikes = $5
+
+    # Count num of records to find mean of views
+    countRecords++
 }
 
 
-BEGIN {maxCount=0}
+BEGIN {maxCount=0;totalViews=0}
 {
     # 1. Count video occurrences and find max number of occurrences
     countVid[videoID]++
     if (countVid[videoID]>maxCount){
         maxCount = countVid[videoID]
     } 
-
+    
+    # 2. Sum up views
+    totalViews += views
 }
 
 END{
@@ -78,7 +83,9 @@ END{
         }
     }
     print "Most frequent video, ID: " mostFreqVid
-
+    
+    # 2. Print the mean of views using printf function
+    printf "Mean number of views: %.2f\n", totalViews / countRecords
 
 }
 
