@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Name: Liang Kooi Yap
-# ID: 24332936
 # Completion date: 24 May 2026
 
 # How to run the script: ./clean trending_videos_unclean.csv
