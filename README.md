@@ -1,4 +1,4 @@
-# CITS4407 Open Source Tools and Scripting - Assignment 2:
+# Open Source Tools and Scripting (Using Bash Script) - Assignment:
 
 ## Introduction
 - The assignment consists of 2 parts which are (i) data cleaning (ii) data analysis
